@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  meus-links-core:
+    image: postgres:14
+    container_name: meus-links-core
+    ports:
+      - "6900:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    restart: always
