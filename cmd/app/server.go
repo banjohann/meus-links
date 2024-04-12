@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	user_handler "github.com/JohannBandelow/meus-links-go/internal/user/handler"
+	"github.com/JohannBandelow/meus-links-go/internal/user"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"gorm.io/gorm"
@@ -16,7 +16,7 @@ type App struct {
 	router      *chi.Mux
 	port        int
 	db          *gorm.DB
-	userHandler *user_handler.UserHandler
+	userHandler *user.UserHandler
 }
 
 // Injeta tudo que é necessário para rodar o App
@@ -58,7 +58,7 @@ func (a *App) Run(ctx context.Context) error {
 	}
 }
 
-func (a *App) WithUserHandler(userHandler *user_handler.UserHandler) {
+func (a *App) WithUserHandler(userHandler *user.UserHandler) {
 	a.userHandler = userHandler
 
 	a.router.Route("/users", a.userHandler.LoadUserRoutes())

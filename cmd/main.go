@@ -4,11 +4,11 @@ import (
 	"context"
 	"os"
 
-	cmd "github.com/JohannBandelow/meus-links-go/cmd/app"
-	"github.com/JohannBandelow/meus-links-go/internal/user/handler"
-	"github.com/JohannBandelow/meus-links-go/internal/user/repository"
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
+
+	cmd "github.com/JohannBandelow/meus-links-go/cmd/app"
+	"github.com/JohannBandelow/meus-links-go/internal/user"
 )
 
 func main() {
@@ -22,14 +22,17 @@ func main() {
 	db := cmd.NewDBConnection(dbUser, dbPass, dbPort, dbName)
 
 	router := chi.NewRouter()
+
 	app := cmd.NewApp(
 		3030,
 		db,
 		router,
 	)
 
-	userRepo := repository.NewUserRepo(db)
-	app.WithUserHandler(handler.NewUserHandler(userRepo))
+	userRepo := user.NewRepo(db)
+	userService := user.NewService(userRepo)
+	userHandler := user.NewHandler(userService)
+	app.WithUserHandler(userHandler)
 
 	app.Run(context.TODO())
 }
