@@ -1,8 +1,6 @@
 package user
 
 import (
-	"os/user"
-
 	"gorm.io/gorm"
 )
 
@@ -16,5 +14,16 @@ func NewRepo(db *gorm.DB) *UserRepo {
 	}
 }
 
-func (repo *UserRepo) Create(user user.User) {
+func (repo *UserRepo) Save(user User) {
+	repo.db.Create(&user)
+}
+
+func (repo *UserRepo) Delete(userID string) {
+}
+
+func (repo *UserRepo) Get(userID string) User {
+	return User{}
+}
+
+func (repo *UserRepo) Update(user User) {
 }
