@@ -19,7 +19,7 @@ func main() {
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 
-	db := cmd.NewDBConnection(dbUser, dbPass, dbPort, dbName)
+	db := cmd.NewDBConnection(dbUser, dbPass, dbName, dbPort)
 
 	router := chi.NewRouter()
 

@@ -2,8 +2,6 @@ package user
 
 import (
 	"errors"
-
-	"github.com/JohannBandelow/meus-links-go/internal/utils"
 )
 
 type UserService struct {
@@ -16,7 +14,7 @@ func NewService(repo *UserRepo) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(cmd CreateUserCmd) (*User, error) {
+func (s *UserService) CreateUser(cmd CreateUserReq) (*User, error) {
 	var err error
 
 	if cmd.Nome == "" {
@@ -31,12 +29,7 @@ func (s *UserService) CreateUser(cmd CreateUserCmd) (*User, error) {
 		errors.Join(err, errors.New("email é obrigatório"))
 	}
 
-	if errSenha := utils.ValidatePassword(cmd.Senha); errSenha != nil {
-		errors.Join(err, errSenha)
-	}
-
-	senhaHash, errSenha := utils.HashPassword(cmd.Senha)
-
+	senha, errSenha := NewPassword(cmd.Senha)
 	if errSenha != nil {
 		errors.Join(err, errSenha)
 	}
@@ -45,7 +38,7 @@ func (s *UserService) CreateUser(cmd CreateUserCmd) (*User, error) {
 		return nil, err
 	}
 
-	user := NewUser(cmd.Nome, cmd.Sobrenome, cmd.Email, senhaHash)
+	user := NewUser(cmd.Nome, cmd.Sobrenome, cmd.Email, *senha)
 	s.repo.Save(*user)
 
 	return user, nil
@@ -57,19 +50,13 @@ func (s *UserService) DeleteUser(userID string) error {
 	return nil
 }
 
-func (s *UserService) GetUser(userID string) (User, error) {
+func (s *UserService) GetUser(userID string) (*User, error) {
 	// implementation of the GetUser method
 
+	return nil, nil
 }
 
 func (s *UserService) UpdateUser(user User) error {
 	// implementation of the UpdateUser method
-}
-
-func (s *UserService) GetUser(userID string) (User, error) {
-	// implementation of the GetUser method
-}
-
-func (s *UserService) UpdateUser(user User) error {
-	// implementation of the UpdateUser method
+	return nil
 }

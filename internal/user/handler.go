@@ -22,17 +22,17 @@ func NewHandler(service *UserService) *UserHandler {
 }
 
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
-	var cmd CreateUserCmd
-	err := json.NewDecoder(r.Body).Decode(&cmd)
+	var req CreateUserReq
+	err := json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
-	err = h.service.CreateUser(cmd)
+	user, err := h.service.CreateUser(req)
 	if err != nil {
-		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		http.Error(w, "Failed to create user", http.StatusBadRequest)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.service.UpdateUser(user)
 	if err != nil {
-		http.Error(w, "Failed to update user", http.StatusInternalServerError)
+		http.Error(w, "Failed to update user", http.StatusBadRequest)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
 	// Retrieve the user from the service
 	user, err := h.service.GetUser(userID)
 	if err != nil {
-		http.Error(w, "Failed to get user", http.StatusInternalServerError)
+		http.Error(w, "Failed to get user", http.StatusBadRequest)
 		return
 	}
 
@@ -77,20 +77,11 @@ func (h *UserHandler) deleteUser(w http.ResponseWriter, r *http.Request) {
 	// Delete the user from the service
 	err := h.service.DeleteUser(userID)
 	if err != nil {
-		http.Error(w, "Failed to delete user with id: "+userID, http.StatusInternalServerError)
+		http.Error(w, "Failed to delete user with id: "+userID, http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-type HttpError struct {
-	Code int    `json:"code"`
-	Err  string `json:"error"`
-}
-
-func writeError(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(statusCode)
 }
 
 func (h *UserHandler) LoadUserRoutes() func(chi.Router) {

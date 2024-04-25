@@ -1,8 +1,8 @@
 package link
 
 import (
-	"github.com/JohannBandelow/meus-links-go/internal/entities"
 	error "github.com/JohannBandelow/meus-links-go/internal/errors"
+	"github.com/JohannBandelow/meus-links-go/internal/utils"
 )
 
 type LinkService struct {
@@ -12,7 +12,7 @@ type LinkService struct {
 const URLSize = 6
 
 func (s *LinkService) CreateLink(linkAPI Link) *error.HttpError {
-	link, err := NewLink(linkAPI.Name, entities.RandomURL(URLSize), linkAPI.RedirectsTo, linkAPI.UserID)
+	link, err := NewLink(linkAPI.Name, utils.RandomURL(URLSize), linkAPI.RedirectsTo, linkAPI.UserID)
 	if err != nil {
 		return error.ErrorBadRequest(err.Error())
 	}

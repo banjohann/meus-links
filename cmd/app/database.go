@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/JohannBandelow/meus-links-go/internal/link"
 	"github.com/JohannBandelow/meus-links-go/internal/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,7 +34,7 @@ func NewDBConnection(dbUser string, password string, dbname string, port string)
 		panic(err)
 	}
 
-	err = db.AutoMigrate(user.User{}, link.Link{})
+	err = db.AutoMigrate(user.User{})
 	if err != nil {
 		panic(err)
 	}

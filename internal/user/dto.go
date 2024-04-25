@@ -1,13 +1,13 @@
 package user
 
-type CreateUserCmd struct {
+type CreateUserReq struct {
 	Nome      string `json:"nome"`
 	Sobrenome string `json:"sobrenome"`
 	Email     string `json:"email"`
 	Senha     string `json:"senha"`
 }
 
-type CreateUserResponse struct {
+type CreateUserResp struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`

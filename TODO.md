@@ -1,5 +1,6 @@
 ## TODO:
- - Configurar o gorm para criar as entidades automaticamente;
+ - Retirar o gorm e implementar o SQLX
+ - Adicionar os migrations para criar o banco
  - Finalizar entidade do user;
  - Caso de uso "Cadastrar um usuario" 
  - Caso de uso "Atualizar um usuario" 

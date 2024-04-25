@@ -7,10 +7,10 @@ type User struct {
 	Nome      string    `json:"nome"  gorm:"not null"`
 	Sobrenome string    `json:"sobrenome" gorm:"not null"`
 	Email     string    `json:"email" gorm:"unique;not null"`
-	Senha     string    `json:"senha"`
+	Senha     Password  `json:"senha"`
 }
 
-func NewUser(nome, sobrenome, email, senha string) *User {
+func NewUser(nome, sobrenome, email string, senha Password) *User {
 	return &User{
 		ID:        uuid.New(),
 		Nome:      nome,

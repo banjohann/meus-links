@@ -1,12 +1,17 @@
-version: '3'
+volumes:
+  meus-links-pg-data: {}
 
 services:
   meus-links-core:
-    image: postgres:14
+    image: sameersbn/postgresql:14
     container_name: meus-links-core
     ports:
       - "6900:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      DB_NAME: meus-links-core
+      DB_USER: admin
+      DB_PASS: password
+      PG_PASSWORD: password
     restart: always
+    volumes:
+          - meus-links-pg-data:/var/lib/postgresql
