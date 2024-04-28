@@ -21,6 +21,10 @@ func NewHandler(service *UserService) *UserHandler {
 	}
 }
 
+func writeError(w http.ResponseWriter, msg string, err error) {
+	http.Error(w, msg+err.Error(), http.StatusBadRequest)
+}
+
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	var req CreateUserReq
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -32,12 +36,12 @@ func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.service.CreateUser(req)
 	if err != nil {
-		http.Error(w, "Failed to create user", http.StatusBadRequest)
+		writeError(w, "Failed to create user: ", err)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(NewCreateUserResp(*user))
 }
 
 func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {

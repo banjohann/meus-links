@@ -32,7 +32,7 @@ func NewApp(port int, db *sqlx.DB, router *chi.Mux) *App {
 }
 
 func (a *App) Run(ctx context.Context) error {
-	log.Println("Starting Server")
+	log.Printf("Starting Server at port %d", a.port)
 
 	ch := make(chan error, 1)
 

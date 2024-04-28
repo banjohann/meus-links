@@ -2,35 +2,41 @@ package user
 
 import (
 	"errors"
-	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
+var (
 	maxSize   = 50
 	minSize   = 8
-	numbers   = "1234567890"
-	lowercase = "abcdefghijklmnopqrstuvwxyz"
-	uppercase = "ABCDEFGHIJKLMNOQRSTUVWXYZ"
-	symbols   = "!@#$%&*()_+"
+	numbers   = []rune("1234567890")
+	lowercase = []rune("abcdefghijklmnopqrstuvwxyz")
+	uppercase = []rune("ABCDEFGHIJKLMNOQRSTUVWXYZ")
+	symbols   = []rune("!@#$%&*()_+")
 )
 
 type Password string
 
-func NewPassword(password string) (*Password, error) {
+func (p Password) String() string {
+	return string(p)
+}
+
+func NewPassword(password string) (Password, error) {
 	if err := validatePassword(password); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	hashPassword, err := hashPassword(password)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	pass := Password(hashPassword)
+	return Password(hashPassword), nil
+}
 
-	return &pass, nil
+func (p *Password) Compare(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(*p), []byte(password))
+	return err == nil
 }
 
 func validatePassword(password string) error {
@@ -42,19 +48,19 @@ func validatePassword(password string) error {
 		return errors.New("password must be at most 50 characters long")
 	}
 
-	if strings.ContainsAny(password, numbers) {
+	if !containsRune(password, uppercase) {
 		return errors.New("password must contain at least one uppercase letter")
 	}
 
-	if strings.ContainsAny(password, lowercase) {
+	if !containsRune(password, lowercase) {
 		return errors.New("password must contain at least one lowercase letter")
 	}
 
-	if strings.ContainsAny(password, uppercase) {
+	if !containsRune(password, numbers) {
 		return errors.New("password must contain at least one number")
 	}
 
-	if strings.ContainsAny(password, symbols) {
+	if !containsRune(password, symbols) {
 		return errors.New("password must contain at least one special character")
 	}
 
@@ -66,7 +72,13 @@ func hashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func (p *Password) Compare(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(*p), []byte(password))
-	return err == nil
+func containsRune(password string, runes []rune) bool {
+	for _, c := range password {
+		for _, r := range runes {
+			if c == r {
+				return true
+			}
+		}
+	}
+	return false
 }

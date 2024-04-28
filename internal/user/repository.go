@@ -1,6 +1,8 @@
 package user
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -22,10 +24,11 @@ func (r *UserRepo) Save(user User) {
 }
 
 func (r *UserRepo) Delete(userID string) {
-	tx := r.db.MustBegin()
 
-	tx.MustExec("DELETE FROM users WHERE id = ($1)", userID)
-	tx.Commit()
+	_, err := r.db.Exec("DELETE FROM users WHERE id = ($1)", userID)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (r *UserRepo) Get(userID string) (User, error) {
