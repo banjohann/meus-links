@@ -9,18 +9,18 @@ import (
 	"github.com/JohannBandelow/meus-links-go/internal/user"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type App struct {
 	router      *chi.Mux
 	port        int
-	db          *gorm.DB
+	db          *sqlx.DB
 	userHandler *user.UserHandler
 }
 
 // Injeta tudo que é necessário para rodar o App
-func NewApp(port int, db *gorm.DB, router *chi.Mux) *App {
+func NewApp(port int, db *sqlx.DB, router *chi.Mux) *App {
 
 	router.Use(middleware.Logger)
 

@@ -1,29 +1,47 @@
 package user
 
 import (
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type UserRepo struct {
-	db *gorm.DB
+	db *sqlx.DB
 }
 
-func NewRepo(db *gorm.DB) *UserRepo {
+func NewRepo(db *sqlx.DB) *UserRepo {
 	return &UserRepo{
 		db: db,
 	}
 }
 
-func (repo *UserRepo) Save(user User) {
-	repo.db.Create(&user)
+func (r *UserRepo) Save(user User) {
+	tx := r.db.MustBegin()
+
+	tx.NamedExec("INSERT INTO users (id, name, last_name, email, password) VALUES (:id, :nome, :sobrenome, :email, :senha)", user)
+	tx.Commit()
 }
 
-func (repo *UserRepo) Delete(userID string) {
+func (r *UserRepo) Delete(userID string) {
+	tx := r.db.MustBegin()
+
+	tx.MustExec("DELETE FROM users WHERE id = ($1)", userID)
+	tx.Commit()
 }
 
-func (repo *UserRepo) Get(userID string) User {
-	return User{}
+func (r *UserRepo) Get(userID string) (User, error) {
+	user := User{}
+
+	err := r.db.Get(&user, "SELECT * FROM users WHERE id = $1", userID)
+	if err != nil {
+		return User{}, err
+	}
+
+	return User{}, nil
 }
 
 func (repo *UserRepo) Update(user User) {
+	tx := repo.db.MustBegin()
+
+	tx.NamedExec("UPDATE users SET name = :nome, sobrenome = :sobrenome, email = :email, password = :password WHERE id = :id", user)
+	tx.Commit()
 }

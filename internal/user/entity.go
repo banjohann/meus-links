@@ -3,10 +3,10 @@ package user
 import "github.com/google/uuid"
 
 type User struct {
-	ID        uuid.UUID `json:"id"    gorm:"primaryKey"`
-	Nome      string    `json:"nome"  gorm:"not null"`
-	Sobrenome string    `json:"sobrenome" gorm:"not null"`
-	Email     string    `json:"email" gorm:"unique;not null"`
+	ID        uuid.UUID `json:"id"`
+	Nome      string    `json:"nome"`
+	Sobrenome string    `json:"sobrenome"`
+	Email     string    `json:"email"`
 	Senha     Password  `json:"senha"`
 }
 
