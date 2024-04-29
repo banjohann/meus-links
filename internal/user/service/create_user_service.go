@@ -1,7 +1,9 @@
-package user
+package service
 
 import (
 	"errors"
+
+	"github.com/JohannBandelow/meus-links-go/internal/user"
 )
 
 type CreateUserReq struct {
@@ -18,8 +20,8 @@ type CreateUserResp struct {
 	Email     string `json:"email"`
 }
 
-func NewCreateUserResp(user User) CreateUserResp {
-	return CreateUserResp{
+func NewCreateUserResp(user user.User) *CreateUserResp {
+	return &CreateUserResp{
 		ID:        user.ID.String(),
 		FirstName: user.Nome,
 		LastName:  user.Sobrenome,
@@ -27,7 +29,7 @@ func NewCreateUserResp(user User) CreateUserResp {
 	}
 }
 
-func (s *UserService) CreateUser(cmd CreateUserReq) (*User, error) {
+func (s *UserService) CreateUser(cmd CreateUserReq) (*CreateUserResp, error) {
 	var err error
 
 	if cmd.Nome == "" {
@@ -42,14 +44,24 @@ func (s *UserService) CreateUser(cmd CreateUserReq) (*User, error) {
 		return nil, errors.New("email é obrigatório")
 	}
 
-	senha, err := NewPassword(cmd.Senha)
+	existsUser := s.repo.FindByEmail(cmd.Email)
+	if existsUser != nil {
+		println(existsUser)
+		return nil, errors.New("email já cadastrado")
+	}
+
+	senha, err := user.NewPassword(cmd.Senha)
 
 	if err != nil {
 		return nil, err
 	}
 
-	user := NewUser(cmd.Nome, cmd.Sobrenome, cmd.Email, senha)
-	s.repo.Save(*user)
+	user := user.NewUser(cmd.Nome, cmd.Sobrenome, cmd.Email, senha)
 
-	return user, nil
+	err = s.repo.Save(*user)
+	if err != nil {
+		return nil, errors.New("internal server error")
+	}
+
+	return NewCreateUserResp(*user), nil
 }

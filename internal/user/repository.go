@@ -16,11 +16,13 @@ func NewRepo(db *sqlx.DB) *UserRepo {
 	}
 }
 
-func (r *UserRepo) Save(user User) {
-	tx := r.db.MustBegin()
+func (r *UserRepo) Save(user User) error {
+	_, err := r.db.NamedExec("INSERT INTO users (id, nome, sobrenome, email, senha) VALUES (:id, :nome, :sobrenome, :email, :senha)", user)
+	if err != nil {
+		return err
+	}
 
-	tx.NamedExec("INSERT INTO users (id, name, last_name, email, password) VALUES (:id, :nome, :sobrenome, :email, :senha)", user)
-	tx.Commit()
+	return nil
 }
 
 func (r *UserRepo) Delete(userID string) {
@@ -40,6 +42,17 @@ func (r *UserRepo) Get(userID string) (User, error) {
 	}
 
 	return User{}, nil
+}
+
+func (r *UserRepo) FindByEmail(email string) *User {
+	user := User{}
+
+	err := r.db.Get(&user, "SELECT * FROM users WHERE email = $1", email)
+	if err != nil {
+		return nil
+	}
+
+	return &user
 }
 
 func (repo *UserRepo) Update(user User) {

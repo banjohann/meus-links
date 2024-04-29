@@ -1,9 +1,10 @@
-package user
+package user_api
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/JohannBandelow/meus-links-go/internal/user/service"
 	"github.com/go-chi/chi"
 )
 
@@ -12,10 +13,10 @@ import (
 // - Write the response data
 
 type UserHandler struct {
-	service *UserService
+	service *service.UserService
 }
 
-func NewHandler(service *UserService) *UserHandler {
+func New(service *service.UserService) *UserHandler {
 	return &UserHandler{
 		service: service,
 	}
@@ -26,7 +27,7 @@ func writeError(w http.ResponseWriter, msg string, err error) {
 }
 
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
-	var req CreateUserReq
+	var req service.CreateUserReq
 	err := json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
@@ -41,25 +42,44 @@ func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(NewCreateUserResp(*user))
+	json.NewEncoder(w).Encode(user)
 }
 
-func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
+func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
+	var req service.LoginUserReq
+	err := json.NewDecoder(r.Body).Decode(&req)
+
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
-	err = h.service.UpdateUser(user)
+	user, err := h.service.LoginUser(req)
 	if err != nil {
-		http.Error(w, "Failed to update user", http.StatusBadRequest)
+		writeError(w, "Failed to login user: ", err)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(*user)
+}
+
+func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
+	// var user user.User
+	// err := json.NewDecoder(r.Body).Decode(&user)
+	// if err != nil {
+	// 	http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	// 	return
+	// }
+
+	// err = h.service.UpdateUser(user)
+	// if err != nil {
+	// 	http.Error(w, "Failed to update user", http.StatusBadRequest)
+	// 	return
+	// }
+
+	// w.WriteHeader(http.StatusOK)
+	// json.NewEncoder(w).Encode(user)
 }
 
 func (h *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +111,7 @@ func (h *UserHandler) deleteUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) LoadUserRoutes() func(chi.Router) {
 	return func(router chi.Router) {
 		router.Post("/", h.createUser)
+		router.Post("/login", h.loginUser)
 		router.Get("/{userID}", h.getUser)
 		router.Put("/", h.updateUser)
 		router.Delete("/{userID}", h.deleteUser)

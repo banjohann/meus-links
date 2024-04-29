@@ -8,6 +8,8 @@ import (
 
 	cmd "github.com/JohannBandelow/meus-links-go/cmd/app"
 	"github.com/JohannBandelow/meus-links-go/internal/user"
+	user_api "github.com/JohannBandelow/meus-links-go/internal/user/api"
+	user_service "github.com/JohannBandelow/meus-links-go/internal/user/service"
 
 	_ "github.com/lib/pq"
 )
@@ -25,8 +27,8 @@ func main() {
 	)
 
 	userRepo := user.NewRepo(db)
-	userService := user.NewService(userRepo)
-	userHandler := user.NewHandler(userService)
+	userService := user_service.New(userRepo)
+	userHandler := user_api.New(userService)
 	app.WithUserHandler(userHandler)
 
 	app.Run(context.TODO())

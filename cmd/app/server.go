@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/JohannBandelow/meus-links-go/internal/user"
+	user_api "github.com/JohannBandelow/meus-links-go/internal/user/api"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/jmoiron/sqlx"
@@ -16,7 +16,7 @@ type App struct {
 	router      *chi.Mux
 	port        int
 	db          *sqlx.DB
-	userHandler *user.UserHandler
+	userHandler *user_api.UserHandler
 }
 
 // Injeta tudo que é necessário para rodar o App
@@ -58,7 +58,7 @@ func (a *App) Run(ctx context.Context) error {
 	}
 }
 
-func (a *App) WithUserHandler(userHandler *user.UserHandler) {
+func (a *App) WithUserHandler(userHandler *user_api.UserHandler) {
 	a.userHandler = userHandler
 
 	a.router.Route("/users", a.userHandler.LoadUserRoutes())

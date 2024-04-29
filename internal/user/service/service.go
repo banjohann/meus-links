@@ -1,10 +1,12 @@
-package user
+package service
+
+import "github.com/JohannBandelow/meus-links-go/internal/user"
 
 type UserService struct {
-	repo *UserRepo
+	repo *user.UserRepo
 }
 
-func NewService(repo *UserRepo) *UserService {
+func New(repo *user.UserRepo) *UserService {
 	return &UserService{
 		repo: repo,
 	}
@@ -16,13 +18,13 @@ func (s *UserService) DeleteUser(userID string) error {
 	return nil
 }
 
-func (s *UserService) GetUser(userID string) (*User, error) {
+func (s *UserService) GetUser(userID string) (*user.User, error) {
 	// implementation of the GetUser method
 
 	return nil, nil
 }
 
-func (s *UserService) UpdateUser(user User) error {
+func (s *UserService) UpdateUser(user user.User) error {
 	// implementation of the UpdateUser method
 	return nil
 }
