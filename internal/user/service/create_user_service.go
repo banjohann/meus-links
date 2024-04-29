@@ -46,7 +46,6 @@ func (s *UserService) CreateUser(cmd CreateUserReq) (*CreateUserResp, error) {
 
 	existsUser := s.repo.FindByEmail(cmd.Email)
 	if existsUser != nil {
-		println(existsUser)
 		return nil, errors.New("email já cadastrado")
 	}
 

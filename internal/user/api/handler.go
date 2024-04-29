@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	api "github.com/JohannBandelow/meus-links-go/internal/api"
 	"github.com/JohannBandelow/meus-links-go/internal/user/service"
+	"github.com/JohannBandelow/meus-links-go/internal/utils"
 	"github.com/go-chi/chi"
 )
-
-// Handlers are only responsible for:
-// - Get the Request body, Request params and query params
-// - Write the response data
 
 type UserHandler struct {
 	service *service.UserService
@@ -22,46 +20,35 @@ func New(service *service.UserService) *UserHandler {
 	}
 }
 
-func writeError(w http.ResponseWriter, msg string, err error) {
-	http.Error(w, msg+err.Error(), http.StatusBadRequest)
-}
-
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	var req service.CreateUserReq
-	err := json.NewDecoder(r.Body).Decode(&req)
-
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
+	encoder := json.NewEncoder(w)
+	utils.DecodeBody(r, encoder, &req)
 
 	user, err := h.service.CreateUser(req)
 	if err != nil {
-		writeError(w, "Failed to create user: ", err)
+		encoder.Encode(api.ErrorBadRequest(err.Error()))
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	encoder.Encode(user)
 }
 
 func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
 	var req service.LoginUserReq
-	err := json.NewDecoder(r.Body).Decode(&req)
+	encoder := json.NewEncoder(w)
 
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
+	utils.DecodeBody(r, encoder, &req)
 
 	user, err := h.service.LoginUser(req)
 	if err != nil {
-		writeError(w, "Failed to login user: ", err)
+		encoder.Encode(api.ErrorBadRequest(err.Error()))
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(*user)
+	encoder.Encode(*user)
 }
 
 func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {

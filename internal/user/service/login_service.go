@@ -10,17 +10,17 @@ type LoginUserReq struct {
 }
 
 type LoginUserResp struct {
-	ID string `json:"id"`
+	Token string `json:"token"`
 }
 
 func (s *UserService) LoginUser(cmd LoginUserReq) (*LoginUserResp, error) {
 	user := s.repo.FindByEmail(cmd.Email)
 	if user == nil {
-		return nil, errors.New("usuário não encontrado")
+		return nil, errors.New("credenciais inválidas")
 	}
 
 	if !user.Senha.Compare(cmd.Senha) {
-		return nil, errors.New("senha inválida")
+		return nil, errors.New("credenciais inválidas")
 	}
 
 	return &LoginUserResp{user.ID.String()}, nil

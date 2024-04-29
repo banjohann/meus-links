@@ -1,11 +1,12 @@
+# Quick Start:
+```shell
+make run
+```
+
 ## TODO:
- - Retirar o gorm e implementar o SQLX
- - Adicionar os migrations para criar o banco
- - Finalizar entidade do user;
- - Caso de uso "Cadastrar um usuario" 
+ - *Working* Caso de uso "Logar" (Adicionar JWT Token)
  - Caso de uso "Atualizar um usuario" 
  - Caso de uso "Deletar um usuario" 
- - Caso de uso "Logar" (Adicionar JWT Token)
  - Criar entidade Link
  - Caso de uso "Cadastrar um link"
  - Caso de uso "Buscar um link"

@@ -1,7 +1,7 @@
 package link
 
 import (
-	error "github.com/JohannBandelow/meus-links-go/internal/errors"
+	error "github.com/JohannBandelow/meus-links-go/internal/api_error"
 	"github.com/JohannBandelow/meus-links-go/internal/utils"
 )
 
