@@ -32,6 +32,7 @@ func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	//test
 	encoder.Encode(user)
 }
 
