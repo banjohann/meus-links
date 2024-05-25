@@ -6,7 +6,7 @@ import (
 	"github.com/JohannBandelow/meus-links-go/internal/user"
 )
 
-type CreateUserReq struct {
+type CreateUserCmd struct {
 	Nome      string `json:"nome"`
 	Sobrenome string `json:"sobrenome"`
 	Email     string `json:"email"`
@@ -29,9 +29,7 @@ func NewCreateUserResp(user user.User) *CreateUserResp {
 	}
 }
 
-func (s *UserService) CreateUser(cmd CreateUserReq) (*CreateUserResp, error) {
-	var err error
-
+func (s *UserService) CreateUser(cmd CreateUserCmd) (*CreateUserResp, error) {
 	if cmd.Nome == "" {
 		return nil, errors.New("nome é obrigatório")
 	}
@@ -50,7 +48,6 @@ func (s *UserService) CreateUser(cmd CreateUserReq) (*CreateUserResp, error) {
 	}
 
 	senha, err := user.NewPassword(cmd.Senha)
-
 	if err != nil {
 		return nil, err
 	}

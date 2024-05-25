@@ -11,32 +11,32 @@ const (
 	numbers   = "1234567890"
 	lowercase = "abcdefghijklmnopqrstuvwxyz"
 	uppercase = "ABCDEFGHIJKLMNOQRSTUVWXYZ"
-	symbols   = "!@#$%&*()_+"
+	symbols   = "!@#$%&*_"
 )
 
 func ValidatePassword(password string) error {
 	if len(password) < 8 {
-		return errors.New("password must be at least 8 characters long")
+		return errors.New("a senha tem que ter ao menos 8 carácteres")
 	}
 
 	if len(password) > 50 {
-		return errors.New("password must be at most 50 characters long")
+		return errors.New("a senha tem ter no máximo 50 carácteres")
 	}
 
 	if strings.ContainsAny(password, numbers) {
-		return errors.New("password must contain at least one uppercase letter")
+		return errors.New("a senha tem que ter ao menos 1 número")
 	}
 
 	if strings.ContainsAny(password, lowercase) {
-		return errors.New("password must contain at least one lowercase letter")
+		return errors.New("a senha tem que ter ao menos uma letra minúscula")
 	}
 
 	if strings.ContainsAny(password, uppercase) {
-		return errors.New("password must contain at least one number")
+		return errors.New("a senha tem que ter ao menos uma letra maiúscula")
 	}
 
 	if strings.ContainsAny(password, symbols) {
-		return errors.New("password must contain at least one special character")
+		return errors.New("a senha tem que conter ao menos un caractere especial (!@#$%&*_)")
 	}
 
 	return nil

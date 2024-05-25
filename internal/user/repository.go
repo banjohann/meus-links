@@ -18,11 +18,8 @@ func NewRepo(db *sqlx.DB) *UserRepo {
 
 func (r *UserRepo) Save(user User) error {
 	_, err := r.db.NamedExec("INSERT INTO users (id, nome, sobrenome, email, senha) VALUES (:id, :nome, :sobrenome, :email, :senha)", user)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func (r *UserRepo) Delete(userID string) {
@@ -33,15 +30,15 @@ func (r *UserRepo) Delete(userID string) {
 	}
 }
 
-func (r *UserRepo) Get(userID string) (User, error) {
+func (r *UserRepo) Get(userID string) (*User, error) {
 	user := User{}
 
 	err := r.db.Get(&user, "SELECT * FROM users WHERE id = $1", userID)
 	if err != nil {
-		return User{}, err
+		return nil, err
 	}
 
-	return User{}, nil
+	return &user, nil
 }
 
 func (r *UserRepo) FindByEmail(email string) *User {
@@ -55,9 +52,8 @@ func (r *UserRepo) FindByEmail(email string) *User {
 	return &user
 }
 
-func (repo *UserRepo) Update(user User) {
-	tx := repo.db.MustBegin()
+func (r *UserRepo) Update(user *User) error {
+	_, err := r.db.NamedExec("UPDATE users SET nome = :nome, sobrenome = :sobrenome, email = :email, senha = :senha WHERE id = :id", user)
 
-	tx.NamedExec("UPDATE users SET name = :nome, sobrenome = :sobrenome, email = :email, password = :password WHERE id = :id", user)
-	tx.Commit()
+	return err
 }

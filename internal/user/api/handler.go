@@ -21,62 +21,67 @@ func New(service *service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
-	var req service.CreateUserReq
+	var req service.CreateUserCmd
 	encoder := json.NewEncoder(w)
 	utils.DecodeBody(r, encoder, &req)
 
 	user, err := h.service.CreateUser(req)
 	if err != nil {
-		encoder.Encode(api.ErrorBadRequest(err.Error()))
+		api.ErrorBadRequest("Erro ao criar usuário", err.Error(), w, r)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	//test
 	encoder.Encode(user)
 }
 
 func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
-	var req service.LoginUserReq
-	encoder := json.NewEncoder(w)
+	var req service.LoginUserCmd
 
-	utils.DecodeBody(r, encoder, &req)
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		api.ErrorBadRequest("Erro ao realizar login", err.Error(), w, r)
+		return
+	}
 
 	user, err := h.service.LoginUser(req)
 	if err != nil {
-		encoder.Encode(api.ErrorBadRequest(err.Error()))
+		api.ErrorBadRequest("Erro ao realizar login", err.Error(), w, r)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	encoder.Encode(*user)
+	json.NewEncoder(w).Encode(*user)
 }
 
 func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
-	// var user user.User
-	// err := json.NewDecoder(r.Body).Decode(&user)
-	// if err != nil {
-	// 	http.Error(w, "Invalid request payload", http.StatusBadRequest)
-	// 	return
-	// }
+	var cmd service.UpdateUserCmd
+	err := json.NewDecoder(r.Body).Decode(&cmd)
 
-	// err = h.service.UpdateUser(user)
-	// if err != nil {
-	// 	http.Error(w, "Failed to update user", http.StatusBadRequest)
-	// 	return
-	// }
+	if err != nil {
+		api.ErrorInternal("Erro ao atualizar usuário.", err.Error(), w, r)
+		return
+	}
 
-	// w.WriteHeader(http.StatusOK)
-	// json.NewEncoder(w).Encode(user)
+	userID := chi.URLParam(r, "userID")
+	cmd.ID = userID
+
+	err = h.service.UpdateUser(cmd)
+	if err != nil {
+		api.ErrorBadRequest("Erro ao atualizar usuário.", err.Error(), w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(service.UpdateUserResponse{ID: cmd.ID})
 }
 
 func (h *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "userID")
 
-	// Retrieve the user from the service
-	user, err := h.service.GetUser(userID)
+	user, err := h.service.GetUserByID(userID)
 	if err != nil {
-		http.Error(w, "Failed to get user", http.StatusBadRequest)
+		api.ErrorBadRequest("Erro ao buscar usuário por id.", err.Error(), w, r)
 		return
 	}
 
@@ -101,7 +106,7 @@ func (h *UserHandler) LoadUserRoutes() func(chi.Router) {
 		router.Post("/", h.createUser)
 		router.Post("/login", h.loginUser)
 		router.Get("/{userID}", h.getUser)
-		router.Put("/", h.updateUser)
+		router.Post("/{userID}", h.updateUser)
 		router.Delete("/{userID}", h.deleteUser)
 	}
 }
