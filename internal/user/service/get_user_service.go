@@ -24,6 +24,6 @@ func (s *UserService) GetUserByID(id string) (*GetUserResponse, error) {
 		ID:        user.ID,
 		Nome:      user.Nome,
 		Sobrenome: user.Sobrenome,
-		Email:     user.Email,
+		Email:     user.Email.String(),
 	}, nil
 }

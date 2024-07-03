@@ -11,9 +11,3 @@ func New(repo *user.UserRepo) *UserService {
 		repo: repo,
 	}
 }
-
-func (s *UserService) DeleteUser(userID string) error {
-	// implementation of the DeleteUser method
-	s.repo.Delete(userID)
-	return nil
-}

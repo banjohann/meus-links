@@ -20,44 +20,36 @@ type CreateUserResp struct {
 	Email     string `json:"email"`
 }
 
-func NewCreateUserResp(user user.User) *CreateUserResp {
-	return &CreateUserResp{
-		ID:        user.ID.String(),
-		FirstName: user.Nome,
-		LastName:  user.Sobrenome,
-		Email:     user.Email,
-	}
-}
-
 func (s *UserService) CreateUser(cmd CreateUserCmd) (*CreateUserResp, error) {
-	if cmd.Nome == "" {
-		return nil, errors.New("nome é obrigatório")
-	}
-
-	if cmd.Sobrenome == "" {
-		return nil, errors.New("sobrenome é obrigatório")
-	}
-
-	if cmd.Email == "" {
-		return nil, errors.New("email é obrigatório")
-	}
-
-	existsUser := s.repo.FindByEmail(cmd.Email)
-	if existsUser != nil {
-		return nil, errors.New("email já cadastrado")
-	}
-
 	senha, err := user.NewPassword(cmd.Senha)
 	if err != nil {
 		return nil, err
 	}
 
-	user := user.NewUser(cmd.Nome, cmd.Sobrenome, cmd.Email, senha)
+	email, err := user.NewEmail(cmd.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := user.NewUser(cmd.Nome, cmd.Sobrenome, email, senha)
+	if err != nil {
+		return nil, err
+	}
+
+	existsUser := s.repo.FindByEmail(email.String())
+	if existsUser != nil {
+		return nil, errors.New("email já cadastrado")
+	}
 
 	err = s.repo.Save(*user)
 	if err != nil {
 		return nil, errors.New("internal server error")
 	}
 
-	return NewCreateUserResp(*user), nil
+	return &CreateUserResp{
+		ID:        user.ID.String(),
+		FirstName: user.Nome,
+		LastName:  user.Sobrenome,
+		Email:     user.Email.String(),
+	}, nil
 }

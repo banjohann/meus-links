@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	user_domain "github.com/JohannBandelow/meus-links-go/internal/user"
 	"github.com/JohannBandelow/meus-links-go/internal/utils"
 )
 
@@ -29,12 +30,17 @@ func (s *UserService) UpdateUser(cmd UpdateUserCmd) error {
 	}
 
 	if cmd.NovoEmail != "" {
+		email, err := user_domain.NewEmail(cmd.NovoEmail)
+		if err != nil {
+			return fmt.Errorf("email informado em formato inválido")
+		}
+
 		userWithNewEmail := s.repo.FindByEmail(cmd.NovoEmail)
 		if userWithNewEmail != nil && user.ID != userWithNewEmail.ID {
 			return fmt.Errorf("email já cadastrado")
 		}
 
-		user.Email = cmd.NovoEmail
+		user.Email = email
 	}
 
 	if cmd.NovaSenha != "" {

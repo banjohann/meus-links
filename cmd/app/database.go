@@ -11,6 +11,7 @@ import (
 
 func createDatabase(db *sqlx.DB) {
 	migrations.CreateUserTable(db)
+	migrations.CreateLinkTable(db)
 }
 
 func NewDBConnection() *sqlx.DB {

@@ -6,7 +6,6 @@ import (
 
 	api "github.com/JohannBandelow/meus-links-go/internal/api"
 	"github.com/JohannBandelow/meus-links-go/internal/user/service"
-	"github.com/JohannBandelow/meus-links-go/internal/utils"
 	"github.com/go-chi/chi"
 )
 
@@ -23,7 +22,7 @@ func New(service *service.UserService) *UserHandler {
 func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	var req service.CreateUserCmd
 	encoder := json.NewEncoder(w)
-	utils.DecodeBody(r, encoder, &req)
+	api.DecodeBody(r, &req)
 
 	user, err := h.service.CreateUser(req)
 	if err != nil {
