@@ -16,7 +16,7 @@ type App struct {
 	router      *chi.Mux
 	port        int
 	db          *sqlx.DB
-	userHandler *user_api.UserHandler
+	userHandler *user_api.UserController
 }
 
 // Injeta tudo que é necessário para rodar o App
@@ -58,7 +58,7 @@ func (a *App) Run(ctx context.Context) error {
 	}
 }
 
-func (a *App) WithUserHandler(userHandler *user_api.UserHandler) {
+func (a *App) WithUserHandler(userHandler *user_api.UserController) {
 	a.userHandler = userHandler
 
 	a.router.Route("/users", a.userHandler.LoadUserRoutes())

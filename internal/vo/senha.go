@@ -1,4 +1,4 @@
-package user
+package vo
 
 import (
 	"errors"
@@ -15,14 +15,14 @@ var (
 	symbols   = []rune("!@#$%&*()_+")
 )
 
-type Password string
+type Senha string
 
-func (p Password) String() string {
+func (p Senha) String() string {
 	return string(p)
 }
 
-func NewPassword(password string) (Password, error) {
-	if err := validatePassword(password); err != nil {
+func NewSenha(password string) (Senha, error) {
+	if err := validaSenha(password); err != nil {
 		return "", err
 	}
 
@@ -31,36 +31,36 @@ func NewPassword(password string) (Password, error) {
 		return "", err
 	}
 
-	return Password(hashPassword), nil
+	return Senha(hashPassword), nil
 }
 
-func (p *Password) Compare(password string) bool {
+func (p *Senha) Compare(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(*p), []byte(password))
 	return err == nil
 }
 
-func validatePassword(password string) error {
-	if len(password) < minSize {
+func validaSenha(senha string) error {
+	if len(senha) < minSize {
 		return errors.New("password must be at least 8 characters long")
 	}
 
-	if len(password) > maxSize {
+	if len(senha) > maxSize {
 		return errors.New("password must be at most 50 characters long")
 	}
 
-	if !containsRune(password, uppercase) {
+	if !containsRune(senha, uppercase) {
 		return errors.New("password must contain at least one uppercase letter")
 	}
 
-	if !containsRune(password, lowercase) {
+	if !containsRune(senha, lowercase) {
 		return errors.New("password must contain at least one lowercase letter")
 	}
 
-	if !containsRune(password, numbers) {
+	if !containsRune(senha, numbers) {
 		return errors.New("password must contain at least one number")
 	}
 
-	if !containsRune(password, symbols) {
+	if !containsRune(senha, symbols) {
 		return errors.New("password must contain at least one special character")
 	}
 

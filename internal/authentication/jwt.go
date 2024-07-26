@@ -1,4 +1,4 @@
-package api
+package auth
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-const secret = "mydeepdarksecret"
+const secret = "mydeepdarkestsecretthatnoonewilleverknow"
 
 type Claims struct {
 	Username string `json:"username"`

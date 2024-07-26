@@ -4,11 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	user_domain "github.com/JohannBandelow/meus-links-go/internal/user"
-	"github.com/JohannBandelow/meus-links-go/internal/utils"
+	"github.com/JohannBandelow/meus-links-go/internal/vo"
 )
 
-type UpdateUserCmd struct {
+type AtualizaUsuarioCmd struct {
 	ID        string `json:"id"`
 	NovoEmail string `json:"novo_email"`
 	NovaSenha string `json:"nova_senha"`
@@ -18,7 +17,7 @@ type UpdateUserResponse struct {
 	ID string `json:"id"`
 }
 
-func (s *UserService) UpdateUser(cmd UpdateUserCmd) error {
+func (s *UserService) AtualizaUsuario(cmd AtualizaUsuarioCmd) error {
 
 	if cmd.ID == "" {
 		return errors.New("é necessário informar o ID")
@@ -30,7 +29,7 @@ func (s *UserService) UpdateUser(cmd UpdateUserCmd) error {
 	}
 
 	if cmd.NovoEmail != "" {
-		email, err := user_domain.NewEmail(cmd.NovoEmail)
+		email, err := vo.NewEmail(cmd.NovoEmail)
 		if err != nil {
 			return fmt.Errorf("email informado em formato inválido")
 		}
@@ -44,10 +43,11 @@ func (s *UserService) UpdateUser(cmd UpdateUserCmd) error {
 	}
 
 	if cmd.NovaSenha != "" {
-		err := utils.ValidatePassword(cmd.NovaSenha)
+		senha, err := vo.NewSenha(cmd.NovaSenha)
 		if err != nil {
 			return fmt.Errorf("a nova senha informada é inválida pois: %s", err.Error())
 		}
+		user.Senha = senha
 	}
 
 	err = s.repo.Update(user)

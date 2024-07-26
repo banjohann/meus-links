@@ -9,22 +9,22 @@ import (
 	"github.com/go-chi/chi"
 )
 
-type UserHandler struct {
+type UserController struct {
 	service *service.UserService
 }
 
-func New(service *service.UserService) *UserHandler {
-	return &UserHandler{
+func New(service *service.UserService) *UserController {
+	return &UserController{
 		service: service,
 	}
 }
 
-func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
-	var req service.CreateUserCmd
+func (h *UserController) create(w http.ResponseWriter, r *http.Request) {
+	var req service.CriarUsuarioCmd
 	encoder := json.NewEncoder(w)
 	api.DecodeBody(r, &req)
 
-	user, err := h.service.CreateUser(req)
+	user, err := h.service.CriaUsuario(req)
 	if err != nil {
 		api.ErrorBadRequest("Erro ao criar usuário", err.Error(), w, r)
 		return
@@ -34,8 +34,8 @@ func (h *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(user)
 }
 
-func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
-	var req service.LoginUserCmd
+func (h *UserController) login(w http.ResponseWriter, r *http.Request) {
+	var req service.LoginCmd
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -43,7 +43,7 @@ func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.LoginUser(req)
+	user, err := h.service.Login(req)
 	if err != nil {
 		api.ErrorBadRequest("Erro ao realizar login", err.Error(), w, r)
 		return
@@ -53,8 +53,8 @@ func (h *UserHandler) loginUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(*user)
 }
 
-func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
-	var cmd service.UpdateUserCmd
+func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
+	var cmd service.AtualizaUsuarioCmd
 	err := json.NewDecoder(r.Body).Decode(&cmd)
 
 	if err != nil {
@@ -65,7 +65,7 @@ func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "userID")
 	cmd.ID = userID
 
-	err = h.service.UpdateUser(cmd)
+	err = h.service.AtualizaUsuario(cmd)
 	if err != nil {
 		api.ErrorBadRequest("Erro ao atualizar usuário.", err.Error(), w, r)
 		return
@@ -75,10 +75,10 @@ func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(service.UpdateUserResponse{ID: cmd.ID})
 }
 
-func (h *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserController) getByID(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "userID")
 
-	user, err := h.service.GetUserByID(userID)
+	user, err := h.service.GetUsuarioByID(userID)
 	if err != nil {
 		api.ErrorBadRequest("Erro ao buscar usuário por id.", err.Error(), w, r)
 		return
@@ -87,11 +87,10 @@ func (h *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func (h *UserHandler) deleteUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserController) delete(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "userID")
 
-	// Delete the user from the service
-	err := h.service.DeleteUser(userID)
+	err := h.service.RemoveUsuario(userID)
 	if err != nil {
 		http.Error(w, "Failed to delete user with id: "+userID, http.StatusBadRequest)
 		return
@@ -100,12 +99,12 @@ func (h *UserHandler) deleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *UserHandler) LoadUserRoutes() func(chi.Router) {
+func (h *UserController) LoadUserRoutes() func(chi.Router) {
 	return func(router chi.Router) {
-		router.Post("/", h.createUser)
-		router.Post("/login", h.loginUser)
-		router.Get("/{userID}", h.getUser)
-		router.Post("/{userID}", h.updateUser)
-		router.Delete("/{userID}", h.deleteUser)
+		router.Post("/", h.create)
+		router.Post("/login", h.login)
+		router.Get("/{userID}", h.getByID)
+		router.Post("/{userID}", h.update)
+		router.Delete("/{userID}", h.delete)
 	}
 }

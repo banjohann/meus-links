@@ -4,16 +4,17 @@ import (
 	"errors"
 )
 
-type LoginUserCmd struct {
+type LoginCmd struct {
 	Email string `json:"email"`
 	Senha string `json:"senha"`
 }
 
 type LoginUserResp struct {
-	Token string `json:"token"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
-func (s *UserService) LoginUser(cmd LoginUserCmd) (*LoginUserResp, error) {
+func (s *UserService) Login(cmd LoginCmd) (*LoginUserResp, error) {
 	user := s.repo.FindByEmail(cmd.Email)
 	if user == nil {
 		return nil, errors.New("credenciais inválidas")
@@ -23,5 +24,5 @@ func (s *UserService) LoginUser(cmd LoginUserCmd) (*LoginUserResp, error) {
 		return nil, errors.New("credenciais inválidas")
 	}
 
-	return &LoginUserResp{user.ID.String()}, nil
+	return &LoginUserResp{user.ID.String(), user.Nome}, nil
 }

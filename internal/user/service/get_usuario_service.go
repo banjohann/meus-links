@@ -6,21 +6,21 @@ import (
 	"github.com/google/uuid"
 )
 
-type GetUserResponse struct {
+type GetUsuarioResponse struct {
 	ID        uuid.UUID `json:"id"`
 	Nome      string    `json:"nome"`
 	Sobrenome string    `json:"sobrenome"`
 	Email     string    `json:"email"`
 }
 
-func (s *UserService) GetUserByID(id string) (*GetUserResponse, error) {
+func (s *UserService) GetUsuarioByID(id string) (*GetUsuarioResponse, error) {
 
 	user, err := s.repo.Get(id)
 	if err != nil {
 		return nil, fmt.Errorf("usuário não encontrado com o ID informado: %s", id)
 	}
 
-	return &GetUserResponse{
+	return &GetUsuarioResponse{
 		ID:        user.ID,
 		Nome:      user.Nome,
 		Sobrenome: user.Sobrenome,

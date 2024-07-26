@@ -3,18 +3,19 @@ package user
 import (
 	"errors"
 
+	"github.com/JohannBandelow/meus-links-go/internal/vo"
 	"github.com/google/uuid"
 )
 
-type User struct {
+type Usuario struct {
 	ID        uuid.UUID `json:"id"`
 	Nome      string    `json:"nome"`
 	Sobrenome string    `json:"sobrenome"`
-	Email     Email     `json:"email"`
-	Senha     Password  `json:"senha"`
+	Email     vo.Email  `json:"email"`
+	Senha     vo.Senha  `json:"senha"`
 }
 
-func NewUser(nome, sobrenome string, email Email, senha Password) (*User, error) {
+func NewUsuario(nome, sobrenome string, email vo.Email, senha vo.Senha) (*Usuario, error) {
 	if nome == "" {
 		return nil, errors.New("nome é obrigatório")
 	}
@@ -27,7 +28,7 @@ func NewUser(nome, sobrenome string, email Email, senha Password) (*User, error)
 		return nil, errors.New("email é obrigatório")
 	}
 
-	return &User{
+	return &Usuario{
 		ID:        uuid.New(),
 		Nome:      nome,
 		Sobrenome: sobrenome,

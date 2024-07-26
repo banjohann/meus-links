@@ -4,34 +4,35 @@ import (
 	"errors"
 
 	"github.com/JohannBandelow/meus-links-go/internal/user"
+	"github.com/JohannBandelow/meus-links-go/internal/vo"
 )
 
-type CreateUserCmd struct {
+type CriarUsuarioCmd struct {
 	Nome      string `json:"nome"`
 	Sobrenome string `json:"sobrenome"`
 	Email     string `json:"email"`
 	Senha     string `json:"senha"`
 }
 
-type CreateUserResp struct {
+type CriarUsuarioResponse struct {
 	ID        string `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	Nome      string `json:"nome"`
+	Sobrenome string `json:"sobrenome"`
 	Email     string `json:"email"`
 }
 
-func (s *UserService) CreateUser(cmd CreateUserCmd) (*CreateUserResp, error) {
-	senha, err := user.NewPassword(cmd.Senha)
+func (s *UserService) CriaUsuario(cmd CriarUsuarioCmd) (*CriarUsuarioResponse, error) {
+	senha, err := vo.NewSenha(cmd.Senha)
 	if err != nil {
 		return nil, err
 	}
 
-	email, err := user.NewEmail(cmd.Email)
+	email, err := vo.NewEmail(cmd.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := user.NewUser(cmd.Nome, cmd.Sobrenome, email, senha)
+	user, err := user.NewUsuario(cmd.Nome, cmd.Sobrenome, email, senha)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +47,10 @@ func (s *UserService) CreateUser(cmd CreateUserCmd) (*CreateUserResp, error) {
 		return nil, errors.New("internal server error")
 	}
 
-	return &CreateUserResp{
+	return &CriarUsuarioResponse{
 		ID:        user.ID.String(),
-		FirstName: user.Nome,
-		LastName:  user.Sobrenome,
+		Nome:      user.Nome,
+		Sobrenome: user.Sobrenome,
 		Email:     user.Email.String(),
 	}, nil
 }

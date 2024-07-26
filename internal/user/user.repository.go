@@ -14,7 +14,7 @@ func NewRepo(db *sqlx.DB) *UserRepo {
 	}
 }
 
-func (r *UserRepo) Save(user User) error {
+func (r *UserRepo) Save(user Usuario) error {
 	_, err := r.db.NamedExec("INSERT INTO users (id, nome, sobrenome, email, senha) VALUES (:id, :nome, :sobrenome, :email, :senha)", user)
 
 	return err
@@ -26,8 +26,8 @@ func (r *UserRepo) Delete(userID string) error {
 	return err
 }
 
-func (r *UserRepo) Get(userID string) (*User, error) {
-	user := User{}
+func (r *UserRepo) Get(userID string) (*Usuario, error) {
+	user := Usuario{}
 
 	err := r.db.Get(&user, "SELECT * FROM users WHERE id = $1", userID)
 	if err != nil {
@@ -37,8 +37,8 @@ func (r *UserRepo) Get(userID string) (*User, error) {
 	return &user, nil
 }
 
-func (r *UserRepo) FindByEmail(email string) *User {
-	user := User{}
+func (r *UserRepo) FindByEmail(email string) *Usuario {
+	user := Usuario{}
 
 	err := r.db.Get(&user, "SELECT * FROM users WHERE email = $1", email)
 	if err != nil {
@@ -48,7 +48,7 @@ func (r *UserRepo) FindByEmail(email string) *User {
 	return &user
 }
 
-func (r *UserRepo) Update(user *User) error {
+func (r *UserRepo) Update(user *Usuario) error {
 	_, err := r.db.NamedExec("UPDATE users SET nome = :nome, sobrenome = :sobrenome, email = :email, senha = :senha WHERE id = :id", user)
 
 	return err
