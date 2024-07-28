@@ -1,4 +1,4 @@
-package service
+package user_service
 
 import "github.com/JohannBandelow/meus-links-go/internal/user"
 

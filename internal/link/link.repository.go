@@ -26,7 +26,7 @@ func (r *LinkRepo) Delete(linkID string) error {
 	return err
 }
 
-func (r *LinkRepo) Get(linkID string) (*Link, error) {
+func (r *LinkRepo) FindByID(linkID string) (*Link, error) {
 	link := Link{}
 
 	err := r.db.Get(&link, "SELECT * FROM links WHERE id = $1", linkID)
@@ -37,15 +37,30 @@ func (r *LinkRepo) Get(linkID string) (*Link, error) {
 	return &link, nil
 }
 
-func (r *LinkRepo) GetByUser(userID string) *Link {
-	user := Link{}
+func (r *LinkRepo) FindByEncurtado(short string) (*Link, error) {
+	link := Link{}
 
-	err := r.db.Get(&user, "SELECT * FROM links WHERE user_id = $1", userID)
+	err := r.db.Get(&link, "SELECT * FROM links WHERE short = $1", short)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return &user
+	return &link, nil
+}
+
+func (r *LinkRepo) GetAllLinksDoUsuario(userID string) ([]Link, error) {
+	links := []Link{}
+
+	err := r.db.Get(&links, "SELECT * FROM links WHERE user_id = $1", userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return links, nil
+}
+
+func (r *LinkRepo) RemoverByUsuarioID(userID string) {
+	r.db.Exec("DELETE FROM links WHERE user_id = ($1)", userID)
 }
 
 func (r *LinkRepo) Update(link *Link) error {

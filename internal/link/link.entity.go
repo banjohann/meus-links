@@ -7,33 +7,33 @@ import (
 )
 
 type Link struct {
-	ID          uuid.UUID `json:"id"`
-	Nome        string    `json:"nome"`
-	UserID      uuid.UUID `json:"userId"`
-	Short       string    `json:"short"`
-	RedirectsTo string    `json:"redirects_to"`
-	Clicks      int       `json:"clicks"`
+	ID         uuid.UUID `json:"id"`
+	Nome       string    `json:"nome"`
+	UsuarioID  uuid.UUID `json:"usuarioId"`
+	Encurtado  string    `json:"encurtado"`
+	URLDestino string    `json:"urlDestino"`
+	Contagem   int       `json:"contagem"`
 }
 
-func NewLink(nome, short, redirectsTo string, userID uuid.UUID) (*Link, error) {
+func NewLink(nome, encurtado, urlDestino string, usuarioId uuid.UUID) (*Link, error) {
 	if nome == "" {
-		return nil, errors.New("É obrigatório informar um nome para o link")
+		return nil, errors.New("é obrigatório informar um nome para o link")
 	}
 
-	if redirectsTo == "" {
-		return nil, errors.New("É obrigatório informar uma URL para redirecionamento")
+	if urlDestino == "" {
+		return nil, errors.New("é obrigatório informar uma URL para redirecionamento")
 	}
 
-	if userID == uuid.Nil {
-		return nil, errors.New("É obrigatório informar o ID do usuário")
+	if usuarioId == uuid.Nil {
+		return nil, errors.New("é obrigatório informar o ID do usuário")
 	}
 
 	return &Link{
-		ID:          uuid.New(),
-		Nome:        nome,
-		UserID:      userID,
-		Short:       short,
-		RedirectsTo: redirectsTo,
-		Clicks:      0,
+		ID:         uuid.New(),
+		Nome:       nome,
+		UsuarioID:  usuarioId,
+		Encurtado:  encurtado,
+		URLDestino: urlDestino,
+		Contagem:   0,
 	}, nil
 }

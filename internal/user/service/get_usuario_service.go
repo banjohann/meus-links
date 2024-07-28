@@ -1,4 +1,4 @@
-package service
+package user_service
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type GetUsuarioResponse struct {
 func (s *UserService) GetUsuarioByID(id string) (*GetUsuarioResponse, error) {
 
 	user, err := s.repo.Get(id)
-	if err != nil {
+	if err != nil || user == nil {
 		return nil, fmt.Errorf("usuário não encontrado com o ID informado: %s", id)
 	}
 

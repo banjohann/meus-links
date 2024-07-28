@@ -5,22 +5,32 @@ import (
 	"net/http"
 
 	api "github.com/JohannBandelow/meus-links-go/internal/api"
-	"github.com/JohannBandelow/meus-links-go/internal/user/service"
+	user_service "github.com/JohannBandelow/meus-links-go/internal/user/service"
 	"github.com/go-chi/chi"
 )
 
 type UserController struct {
-	service *service.UserService
+	service *user_service.UserService
 }
 
-func New(service *service.UserService) *UserController {
+func New(service *user_service.UserService) *UserController {
 	return &UserController{
 		service: service,
 	}
 }
 
+func (h *UserController) LoadUserRoutes() func(chi.Router) {
+	return func(router chi.Router) {
+		router.Post("/", h.create)
+		router.Post("/login", h.login)
+		router.Get("/{id}", h.getByID)
+		router.Post("/{id}", h.update)
+		router.Delete("/{id}", h.delete)
+	}
+}
+
 func (h *UserController) create(w http.ResponseWriter, r *http.Request) {
-	var req service.CriarUsuarioCmd
+	var req user_service.CriarUsuarioCmd
 	encoder := json.NewEncoder(w)
 	api.DecodeBody(r, &req)
 
@@ -35,7 +45,7 @@ func (h *UserController) create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserController) login(w http.ResponseWriter, r *http.Request) {
-	var req service.LoginCmd
+	var req user_service.LoginCmd
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -54,7 +64,7 @@ func (h *UserController) login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
-	var cmd service.AtualizaUsuarioCmd
+	var cmd user_service.AtualizaUsuarioCmd
 	err := json.NewDecoder(r.Body).Decode(&cmd)
 
 	if err != nil {
@@ -62,7 +72,7 @@ func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := chi.URLParam(r, "userID")
+	userID := chi.URLParam(r, "id")
 	cmd.ID = userID
 
 	err = h.service.AtualizaUsuario(cmd)
@@ -72,11 +82,11 @@ func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(service.UpdateUserResponse{ID: cmd.ID})
+	json.NewEncoder(w).Encode(user_service.UpdateUserResponse{ID: cmd.ID})
 }
 
 func (h *UserController) getByID(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "userID")
+	userID := chi.URLParam(r, "id")
 
 	user, err := h.service.GetUsuarioByID(userID)
 	if err != nil {
@@ -88,7 +98,7 @@ func (h *UserController) getByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserController) delete(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "userID")
+	userID := chi.URLParam(r, "id")
 
 	err := h.service.RemoveUsuario(userID)
 	if err != nil {
@@ -97,14 +107,4 @@ func (h *UserController) delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func (h *UserController) LoadUserRoutes() func(chi.Router) {
-	return func(router chi.Router) {
-		router.Post("/", h.create)
-		router.Post("/login", h.login)
-		router.Get("/{userID}", h.getByID)
-		router.Post("/{userID}", h.update)
-		router.Delete("/{userID}", h.delete)
-	}
 }
