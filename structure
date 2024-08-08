@@ -1,0 +1,54 @@
+An UseCase has all the required dependencies for an user UseCase, it can have repositories and other services.
+-- Use Case: Can depend on multiple services to complete its task. In the example of CreateOrderUseCase, it depends on OrderRepository and PaymentService.
+-- Service: Provides functionality that can be utilized by multiple use cases but does not depend on the use cases themselves.
+
+project/
+|-- cmd/
+|   `-- projectname/
+|       `-- main.go
+|-- internal/
+|   |-- domain/
+|   |   |-- order/
+|   |   |   |-- order.go
+|   |   |   |-- order_dto.go
+|   |   |-- user/
+|   |       |-- user.go
+|   |       |-- user_dto.go
+|   |-- repository/
+|   |   |-- order/
+|   |   |   `-- order_repository.go <- Only interface with required methods
+|   |   |-- user/
+|   |       `-- user_repository.go
+|   |-- service/
+|   |   |-- payment/
+|   |   |   `-- payment_service.go
+|   |   |-- user/
+|   |       `-- user_query_service.go
+|   |   |-- auth/
+|   |       `-- auth_service.go -> Has an interface for differents implementations
+|   |       `-- auth_service_impl.go
+|   |-- usecase/
+|   |   |-- order/
+|   |   |   `-- create_order_usecase.go
+|   |   |-- user/
+|   |       `-- create_user_usecase.go <- Has all the dependencies needed for an operation
+|   |-- adapters/
+|   |   |-- http/
+|   |   |   |-- handler.go <- Has util functions/structs to help in the HTTP API
+|   |   |   |-- order_handler.go
+|   |   |   |-- user_handler.go
+|   |   |-- db/
+|   |   |   |-- order_repository_impl.go
+|   |   |   |-- user_repository_impl.go
+|-- shared/
+|   `-- (optional common utility packages)
+|   `-- random.go
+|-- configs/
+|   |-- config.go <- Has util functions/structs to help in the application as a whole
+|-- api/
+|   |-- middleware/
+|   |   `-- auth.go -> has AuthService
+|   |-- routes/
+|   |   `-- routes.go -> Mounts all the routes to the Server
+|-- go.mod
+|-- go.sum

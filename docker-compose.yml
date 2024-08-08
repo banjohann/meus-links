@@ -12,6 +12,6 @@ services:
       DB_USER: admin
       DB_PASS: password
       PG_PASSWORD: password
-    restart: always
+    restart: never
     volumes:
-          - meus-links-pg-data:/var/lib/postgresql
+      - meus-links-pg-data:/var/lib/postgresql
