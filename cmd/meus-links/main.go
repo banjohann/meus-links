@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/JohannBandelow/meus-links-go/configs"
@@ -22,10 +21,8 @@ type Application struct {
 }
 
 func main() {
-	db := configs.NewDBConnection()
-
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
+	db := configs.NewPostgresConnection()
+	router := configs.SetupRouter(db)
 
 	app := Application{
 		Port:   3030,
@@ -33,10 +30,10 @@ func main() {
 		Router: router,
 	}
 
-	Run(context.TODO(), app)
+	run(context.TODO(), app)
 }
 
-func Run(ctx context.Context, app Application) error {
+func run(ctx context.Context, app Application) error {
 	log.Printf("Starting Server at port %d", app.Port)
 
 	ch := make(chan error, 1)

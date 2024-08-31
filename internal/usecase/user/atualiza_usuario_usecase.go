@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/JohannBandelow/meus-links-go/internal/domain/user"
-	user_repo "github.com/JohannBandelow/meus-links-go/internal/repository/user"
+	"github.com/JohannBandelow/meus-links-go/internal/models/user"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 )
 
 type AtualizaUsuarioCmd struct {
@@ -19,7 +19,7 @@ type AtualizaUsuarioResponse struct {
 }
 
 type AtualizaUsuarioUseCase struct {
-	Repo user_repo.UserRepo
+	Repo repository.UserRepo
 }
 
 func (s *AtualizaUsuarioUseCase) Handle(cmd AtualizaUsuarioCmd) (*AtualizaUsuarioResponse, error) {

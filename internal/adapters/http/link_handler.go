@@ -9,11 +9,11 @@ import (
 )
 
 type LinkController struct {
-	criaLinkUseCase     link.CriaLinkUseCase
-	atualizaLinkUseCase link.AtualizaLinkUseCase
-	removerLinkUseCase  link.RemoverLinkUseCase
-	getByIdUseCase      link.GetByIdLinkUseCase
-	getAllUseCase       link.GetAllLinkUseCase
+	CriaLinkUseCase     link.CriaLinkUseCase
+	AtualizaLinkUseCase link.AtualizaLinkUseCase
+	RemoverLinkUseCase  link.RemoverLinkUseCase
+	GetByIdUseCase      link.GetByIdLinkUseCase
+	GetAllUseCase       link.GetAllLinkUseCase
 }
 
 func (h *LinkController) LoadRoutes() func(chi.Router) {
@@ -34,7 +34,7 @@ func (h *LinkController) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	link, err := h.criaLinkUseCase.Handle(req)
+	link, err := h.CriaLinkUseCase.Handle(req)
 	if err != nil {
 		ErrorBadRequest("Erro ao criar link", err.Error(), w, r)
 		return
@@ -45,7 +45,7 @@ func (h *LinkController) create(w http.ResponseWriter, r *http.Request) {
 
 func (h *LinkController) delete(w http.ResponseWriter, r *http.Request) {
 	linkID := chi.URLParam(r, "id")
-	err := h.removerLinkUseCase.Handle(linkID)
+	err := h.RemoverLinkUseCase.Handle(linkID)
 	if err != nil {
 		ErrorBadRequest("Erro ao deletar link", err.Error(), w, r)
 		return
@@ -63,7 +63,7 @@ func (h *LinkController) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	link, err := h.atualizaLinkUseCase.Handle(linkId, req)
+	link, err := h.AtualizaLinkUseCase.Handle(linkId, req)
 	if err != nil {
 		ErrorBadRequest("Erro ao atualizar link", err.Error(), w, r)
 		return
@@ -74,7 +74,7 @@ func (h *LinkController) update(w http.ResponseWriter, r *http.Request) {
 
 func (h *LinkController) getById(w http.ResponseWriter, r *http.Request) {
 	linkID := chi.URLParam(r, "id")
-	link, err := h.getByIdUseCase.Handle(linkID)
+	link, err := h.GetByIdUseCase.Handle(linkID)
 	if err != nil {
 		errMsg := fmt.Sprintf("Link não encontrado com o id: %s", linkID)
 		ErrorBadRequest(errMsg, err.Error(), w, r)
@@ -85,7 +85,7 @@ func (h *LinkController) getById(w http.ResponseWriter, r *http.Request) {
 
 func (h *LinkController) getAll(w http.ResponseWriter, r *http.Request) {
 	var req link.GetAllRequestFilter
-	links, err := h.getAllUseCase.Handle(req)
+	links, err := h.GetAllUseCase.Handle(req)
 	if err != nil {
 		ErrorBadRequest("Erro ao deletar link", err.Error(), w, r)
 		return

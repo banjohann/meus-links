@@ -1,16 +1,16 @@
 package link
 
 import (
-	"github.com/JohannBandelow/meus-links-go/internal/domain/link"
-	link_repo "github.com/JohannBandelow/meus-links-go/internal/repository/link"
+	"github.com/JohannBandelow/meus-links-go/internal/models/link"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 )
 
 type GetByIdLinkUseCase struct {
-	repo link_repo.LinkRepo
+	Repo repository.LinkRepo
 }
 
 func (s *GetByIdLinkUseCase) Handle(linkID string) (*link.Link, error) {
-	link, err := s.repo.FindByID(linkID)
+	link, err := s.Repo.FindByID(linkID)
 	if err != nil {
 		return nil, err
 	}

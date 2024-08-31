@@ -1,6 +1,6 @@
-package user
+package service
 
-import "github.com/JohannBandelow/meus-links-go/internal/domain/user"
+import "github.com/JohannBandelow/meus-links-go/internal/models/user"
 
 type UserService struct {
 }

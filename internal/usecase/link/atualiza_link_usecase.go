@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/JohannBandelow/meus-links-go/internal/domain/link"
-	link_repo "github.com/JohannBandelow/meus-links-go/internal/repository/link"
+	"github.com/JohannBandelow/meus-links-go/internal/models/link"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 )
 
 type AtualizaLinkCmd struct {
@@ -15,11 +15,11 @@ type AtualizaLinkCmd struct {
 }
 
 type AtualizaLinkUseCase struct {
-	repo link_repo.LinkRepo
+	Repo repository.LinkRepo
 }
 
 func (s *AtualizaLinkUseCase) Handle(linkID string, cmd AtualizaLinkCmd) (*link.Link, error) {
-	linkFound, err := s.repo.FindByID(linkID)
+	linkFound, err := s.Repo.FindByID(linkID)
 	if err != nil || linkFound == nil {
 		return nil, errors.New("link não encontrado")
 	}
@@ -28,7 +28,7 @@ func (s *AtualizaLinkUseCase) Handle(linkID string, cmd AtualizaLinkCmd) (*link.
 	linkFound.URLDestino = cmd.URLDestino
 
 	if cmd.URLCustom != "" {
-		linkCustom, _ := s.repo.FindByEncurtado(cmd.URLCustom)
+		linkCustom, _ := s.Repo.FindByEncurtado(cmd.URLCustom)
 		if linkCustom != nil {
 			return nil, fmt.Errorf("link Curto com a URL %s já existe", cmd.URLCustom)
 		}
@@ -36,7 +36,7 @@ func (s *AtualizaLinkUseCase) Handle(linkID string, cmd AtualizaLinkCmd) (*link.
 		linkFound.Encurtado = cmd.URLCustom
 	}
 
-	s.repo.Save(linkFound)
+	s.Repo.Save(*linkFound)
 
 	return linkFound, nil
 }

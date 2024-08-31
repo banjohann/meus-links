@@ -3,8 +3,8 @@ package user
 import (
 	"errors"
 
-	"github.com/JohannBandelow/meus-links-go/internal/domain/user"
-	user_repo "github.com/JohannBandelow/meus-links-go/internal/repository/user"
+	"github.com/JohannBandelow/meus-links-go/internal/models/user"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 )
 
 type CriarUsuarioCmd struct {
@@ -22,7 +22,7 @@ type CriarUsuarioResponse struct {
 }
 
 type CriarUsuarioUseCase struct {
-	repo user_repo.UserRepo
+	Repo repository.UserRepo
 }
 
 func (s *CriarUsuarioUseCase) Handle(cmd CriarUsuarioCmd) (*CriarUsuarioResponse, error) {
@@ -41,12 +41,12 @@ func (s *CriarUsuarioUseCase) Handle(cmd CriarUsuarioCmd) (*CriarUsuarioResponse
 		return nil, err
 	}
 
-	existsUser := s.repo.FindByEmail(email.String())
+	existsUser := s.Repo.FindByEmail(email.String())
 	if existsUser != nil {
 		return nil, errors.New("email já cadastrado")
 	}
 
-	err = s.repo.Save(user)
+	err = s.Repo.Save(*user)
 	if err != nil {
 		return nil, errors.New("internal server error")
 	}

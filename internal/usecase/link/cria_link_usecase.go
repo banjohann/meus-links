@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/JohannBandelow/meus-links-go/internal/domain/link"
-	link_repo "github.com/JohannBandelow/meus-links-go/internal/repository/link"
-	"github.com/JohannBandelow/meus-links-go/internal/service/user"
+	"github.com/JohannBandelow/meus-links-go/internal/models/link"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
+	"github.com/JohannBandelow/meus-links-go/internal/service"
 	"github.com/JohannBandelow/meus-links-go/internal/shared"
 	"github.com/google/uuid"
 )
@@ -19,18 +19,18 @@ type CriaLinkCmd struct {
 }
 
 type CriaLinkUseCase struct {
-	repo        link_repo.LinkRepo
-	userService user.UserService
+	Repo        repository.LinkRepo
+	UserService service.UserService
 }
 
 func (s *CriaLinkUseCase) Handle(cmd CriaLinkCmd) (*link.Link, error) {
-	user, err := s.userService.GetUsuarioByID(cmd.UsuarioID)
+	user, err := s.UserService.GetUsuarioByID(cmd.UsuarioID)
 	if err != nil || user == nil {
 		return nil, errors.New("usuário não encontrado")
 	}
 
 	if cmd.URLCustom != "" {
-		linkCustom, _ := s.repo.FindByEncurtado(cmd.URLCustom)
+		linkCustom, _ := s.Repo.FindByEncurtado(cmd.URLCustom)
 		if linkCustom != nil {
 			return nil, fmt.Errorf("link Curto com a URL %s já existe", cmd.URLCustom)
 		}
@@ -41,7 +41,7 @@ func (s *CriaLinkUseCase) Handle(cmd CriaLinkCmd) (*link.Link, error) {
 		return nil, err
 	}
 
-	s.repo.Save(link)
+	s.Repo.Save(*link)
 
 	return link, nil
 }

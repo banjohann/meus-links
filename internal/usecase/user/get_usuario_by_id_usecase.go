@@ -3,7 +3,7 @@ package user
 import (
 	"fmt"
 
-	user_repo "github.com/JohannBandelow/meus-links-go/internal/repository/user"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 	"github.com/google/uuid"
 )
 
@@ -15,12 +15,12 @@ type GetUsuarioResponse struct {
 }
 
 type GetUsuarioByIdUseCase struct {
-	repo user_repo.UserRepo
+	Repo repository.UserRepo
 }
 
 func (s *GetUsuarioByIdUseCase) Handle(id string) (*GetUsuarioResponse, error) {
 
-	user, err := s.repo.FindByID(id)
+	user, err := s.Repo.FindByID(id)
 	if err != nil || user == nil {
 		return nil, fmt.Errorf("usuário não encontrado com o ID informado: %s", id)
 	}

@@ -13,7 +13,7 @@ func executeMigrations(db *sqlx.DB) {
 	db.MustExec(migrations.CreateUserTable)
 }
 
-func NewDBConnection() *sqlx.DB {
+func NewPostgresConnection() *sqlx.DB {
 	credentials := LoadConfig()
 
 	dbUser := credentials.DBUser

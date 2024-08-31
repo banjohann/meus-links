@@ -1,8 +1,8 @@
 package link
 
 import (
-	"github.com/JohannBandelow/meus-links-go/internal/domain/link"
-	link_repo "github.com/JohannBandelow/meus-links-go/internal/repository/link"
+	"github.com/JohannBandelow/meus-links-go/internal/models/link"
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
 	"github.com/google/uuid"
 )
 
@@ -11,9 +11,9 @@ type GetAllRequestFilter struct {
 }
 
 type GetAllLinkUseCase struct {
-	repo link_repo.LinkRepo
+	Repo repository.LinkRepo
 }
 
 func (s *GetAllLinkUseCase) Handle(requestFilter GetAllRequestFilter) ([]link.Link, error) {
-	return s.repo.FindByUsuarioID(requestFilter.UsuarioId.String())
+	return s.Repo.FindByUsuarioID(requestFilter.UsuarioId.String())
 }

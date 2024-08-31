@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/JohannBandelow/meus-links-go/internal/service/auth"
+	"github.com/JohannBandelow/meus-links-go/internal/service"
 )
 
 type AuthController struct {
-	service auth.AuthService
+	service service.AuthService
 }
 
-func (h *UserController) login(w http.ResponseWriter, r *http.Request) {
-	var req user.LoginCmd
+func (h *AuthController) login(w http.ResponseWriter, r *http.Request) {
+	var req service.LoginCmd
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -22,7 +22,7 @@ func (h *UserController) login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.service.Login(req)
 	if err != nil {
-		api.ErrorBadRequest("Erro ao realizar login", err.Error(), w, r)
+		ErrorBadRequest("Erro ao realizar login", err.Error(), w, r)
 		return
 	}
 

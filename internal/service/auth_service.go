@@ -1,8 +1,13 @@
-package auth
+package service
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/JohannBandelow/meus-links-go/internal/repository"
+)
 
 type AuthService struct {
+	userRepo repository.UserRepo
 }
 
 type LoginCmd struct {
@@ -15,8 +20,8 @@ type LoginUserResp struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func Login(cmd LoginCmd) (*LoginUserResp, error) {
-	user := s.repo.FindByEmail(cmd.Email)
+func (s *AuthService) Login(cmd LoginCmd) (*LoginUserResp, error) {
+	user := s.userRepo.FindByEmail(cmd.Email)
 	if user == nil {
 		return nil, errors.New("credenciais inválidas")
 	}

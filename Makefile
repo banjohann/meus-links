@@ -1,3 +1,3 @@
 run:
 	@docker compose up -d
-	@go run cmd/main.go
+	@go run cmd/meus-links/main.go

@@ -8,10 +8,10 @@ import (
 )
 
 type UserController struct {
-	criaUsuarioUseCase     user.CriarUsuarioUseCase
-	atualizaUsuarioUseCase user.AtualizaUsuarioUseCase
-	removeUsuarioUseCase   user.RemoveUsuarioUseCase
-	getUsuarioUseCase      user.GetUsuarioByIdUseCase
+	CriaUsuarioUseCase     user.CriarUsuarioUseCase
+	AtualizaUsuarioUseCase user.AtualizaUsuarioUseCase
+	RemoveUsuarioUseCase   user.RemoveUsuarioUseCase
+	GetUsuarioUseCase      user.GetUsuarioByIdUseCase
 }
 
 func (h *UserController) LoadRoutes() func(chi.Router) {
@@ -31,7 +31,7 @@ func (h *UserController) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.criaUsuarioUseCase.Handle(req)
+	user, err := h.CriaUsuarioUseCase.Handle(req)
 	if err != nil {
 		ErrorBadRequest("Erro ao criar usuário", err.Error(), w, r)
 		return
@@ -52,7 +52,7 @@ func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	cmd.ID = userID
 
-	resp, err := h.atualizaUsuarioUseCase.Handle(cmd)
+	resp, err := h.AtualizaUsuarioUseCase.Handle(cmd)
 	if err != nil {
 		ErrorBadRequest("Erro ao atualizar usuário.", err.Error(), w, r)
 		return
@@ -64,7 +64,7 @@ func (h *UserController) update(w http.ResponseWriter, r *http.Request) {
 func (h *UserController) getByID(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 
-	user, err := h.getUsuarioUseCase.Handle(userID)
+	user, err := h.GetUsuarioUseCase.Handle(userID)
 	if err != nil {
 		ErrorBadRequest("Erro ao buscar usuário por id.", err.Error(), w, r)
 		return
@@ -76,7 +76,7 @@ func (h *UserController) getByID(w http.ResponseWriter, r *http.Request) {
 func (h *UserController) delete(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 
-	err := h.removeUsuarioUseCase.Handle(userID)
+	err := h.RemoveUsuarioUseCase.Handle(userID)
 	if err != nil {
 		ErrorBadRequest("Erro ao remover usuário.", err.Error(), w, r)
 		return
