@@ -4,14 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/JohannBandelow/meus-links-go/migrations"
 	"github.com/jmoiron/sqlx"
 )
-
-func executeMigrations(db *sqlx.DB) {
-	db.MustExec(migrations.CreateLinkTable)
-	db.MustExec(migrations.CreateUserTable)
-}
 
 func NewPostgresConnection() *sqlx.DB {
 	credentials := LoadConfig()
@@ -40,7 +34,11 @@ func NewPostgresConnection() *sqlx.DB {
 
 	db := sqlx.MustConnect("postgres", dsn)
 
-	executeMigrations(db)
+	err := ExecMigrations(db)
+	if err != nil {
+		fmt.Println("Error running migrations")
+		panic(err)
+	}
 
 	return db
 }

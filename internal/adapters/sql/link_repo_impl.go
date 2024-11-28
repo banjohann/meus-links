@@ -1,4 +1,4 @@
-package repository
+package sql
 
 import (
 	"github.com/JohannBandelow/meus-links-go/internal/models/link"

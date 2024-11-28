@@ -1,8 +1,8 @@
 package configs
 
 import (
-	repository "github.com/JohannBandelow/meus-links-go/internal/adapters/db"
 	api "github.com/JohannBandelow/meus-links-go/internal/adapters/http"
+	"github.com/JohannBandelow/meus-links-go/internal/adapters/sql"
 	"github.com/JohannBandelow/meus-links-go/internal/service"
 	"github.com/JohannBandelow/meus-links-go/internal/usecase/link"
 	"github.com/JohannBandelow/meus-links-go/internal/usecase/user"
@@ -16,8 +16,8 @@ func SetupRouter(dbConn *sqlx.DB) *chi.Mux {
 
 	router.Use(middleware.Logger)
 
-	linkRepo := repository.NewLinkRepo(dbConn)
-	userRepo := repository.NewUserRepo(dbConn)
+	linkRepo := sql.NewLinkRepo(dbConn)
+	userRepo := sql.NewUserRepo(dbConn)
 	userService := service.UserService{}
 
 	linkHandler := api.LinkController{
